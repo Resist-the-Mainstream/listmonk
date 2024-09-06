@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")/.."
 
-run_docker="bash rtm/run-docker.sh rtm/elestio.Dockerfile \
+run_docker="bash rtm/run-docker.sh Dockerfile \
     --volumes ./uploads:/listmonk/uploads"
 
 if [ "$1" = "--clean" ]; then

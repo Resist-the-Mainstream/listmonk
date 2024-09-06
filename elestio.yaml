@@ -3,9 +3,9 @@ config:
   version: ""
   framework: ""
   installCommand: ""
-  buildCommand: "rtm/elestio.sh --build"
+  buildCommand: "docker compose build"
   buildDir: "/"
-  runCommand: "rtm/elestio.sh --up"
+  runCommand: "docker compose up -d"
   isMonoRepoPackageInRoot: false
 environments:
   - key: "NETWORK"
