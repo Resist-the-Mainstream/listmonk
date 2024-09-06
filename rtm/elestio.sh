@@ -11,6 +11,7 @@ docker_compose="docker compose \
 case "$1" in
 	"--build")
 		rtm/build.sh
+		rtm/run-elestio.sh
 		eval "$docker_compose build"
 		;;
 	"--up")

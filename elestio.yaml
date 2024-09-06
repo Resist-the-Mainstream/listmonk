@@ -61,6 +61,6 @@ lifeCycleConfig:
 webUI:
   - url: "https://[CI_CD_DOMAIN]"
     label: "Listmonk"
-    login: "[LISTMONK_ADMIN_USER]"
-    password: "[LISTMONK_ADMIN_PASSWORD]"
+    login: "[EMAIL]"
+    password: "random_password"
 monoRepoWorkSpaces: []
