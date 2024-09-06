@@ -119,11 +119,6 @@ init-dev-docker: build-dev-docker ## Delete the docker containers including DB v
 # RTM extensions
 #
 
-MAKEFLAGS += -j
-export USER := $(shell whoami)
-export UID := $(shell id -u)
-export GID := $(shell id -g)
-
 go_ldflags := -s -w \
 	-X 'main.buildString=${BUILDSTR}' \
 	-X 'main.versionString=${VERSION}' \
@@ -131,31 +126,33 @@ go_ldflags := -s -w \
 
 go_run := CGO_ENABLED=0 go run -ldflags="$(go_ldflags)" cmd/*.go --config=""
 
-docker_compose_dev := docker compose \
-	--project-name rtm-dev-listmonk \
-	--file rtm/dev.docker-compose.yml \
-	--env-file rtm/dev.env \
-	--project-directory rtm
-
 .PHONY: rtm-dev
-rtm-dev:
-	$(docker_compose_dev) up --force-recreate
+rtm-dev: rtm/dev.sh
+
+.PHONY: .rtm-dev
+.rtm-dev: $(FRONTEND_YARN_MODULES)
 
 .PHONY: .rtm-dev-frontend
-.rtm-dev-frontend: export VUE_APP_VERSION = "${VERSION}-RTM"
-.rtm-dev-frontend:
+.rtm-dev-frontend: export VUE_APP_VERSION = "${VERSION}"
+.rtm-dev-frontend: $(FRONTEND_YARN_MODULES)
 	cd frontend && $(YARN) dev
 
 .PHONY: .rtm-dev-backend
-.rtm-dev-backend:
-	$(go_run) --yes --idempotent --install --upgrade
-	$(go_run)
+.rtm-dev-backend: $(FRONTEND_YARN_MODULES)
+	$(go_run) --yes --idempotent --install --upgrade --config=""
+	$(go_run) --config=""
 
 .PHONY: rtm-dev-clean
 rtm-dev-clean:
-	$(docker_compose_dev) down -v --remove-orphans
-	docker rmi $$(docker images -a -q --filter=reference='rtm-dev-listmonk-*')
+	rtm/dev.sh --clean
 
 .PHONY: rtm-build
 rtm-build:
-	@echo rtm-build
+	rtm/build.sh
+
+.PHONY: .rtm-build
+.rtm-build: dist
+
+.PHONY: rtm-build-clean
+rtm-build-clean:
+	rtm/build.sh --clean

@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:14
+    ports:
+      - "${LISTMONK_db__port}"
+    networks:
+      - listmonk
+    environment:
+      - POSTGRES_DB=${LISTMONK_db__database}
+      - POSTGRES_USER=${LISTMONK_db__user}
+      - POSTGRES_PASSWORD=${LISTMONK_db__password}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    container_name: listmonk_db
+    volumes:
+      - ../DB:/var/lib/postgresql/data
+
+  app:
+    restart: unless-stopped
+    image: listmonk--rtm_elestio:latest
+    env_file: "../.env"
+    ports:
+      - "${NETWORK}:9000:9000" # hardcoded for now
+    networks:
+      - listmonk
+    environment:
+      - TZ=Etc/UTC
+    container_name: listmonk_app
+    depends_on:
+      - db
+    volumes:
+      - ../uploads:/listmonk/uploads
+
+networks:
+  listmonk:
+
+volumes:
+  listmonk-data:

@@ -16,14 +16,8 @@ services:
         target: /var/lib/postgresql/data
 
   frontend:
-    build:
-      context: ../
-      dockerfile: rtm/dev.Dockerfile
-      args:
-        - USER=${USER}
-        - UID=${UID}
-        - GID=${GID}
-    user: "${UID}:${GID}"
+    image: listmonk--rtm_dev:latest
+    restart: always
     command: ["make", ".rtm-dev-frontend"]
     ports:
       - "9000:9000"
@@ -39,35 +33,15 @@ services:
       - listmonk
 
   backend:
-    build:
-      context: ../
-      dockerfile: rtm/dev.Dockerfile
-      args:
-        - USER=${USER}
-        - UID=${UID}
-        - GID=${GID}
-    user: "${UID}:${GID}"
+    image: listmonk--rtm_dev:latest
     command: ["make", ".rtm-dev-backend"]
     ports:
       - "9000"
-    environment:
-      - LISTMONK_ADMIN_USER=${LISTMONK_ADMIN_USER}
-      - LISTMONK_ADMIN_PASSWORD=${LISTMONK_ADMIN_PASSWORD}
-      - LISTMONK_app__address=${LISTMONK_app__address}
-      - LISTMONK_db__host=${LISTMONK_db__host}
-      - LISTMONK_db__port=${LISTMONK_db__port}
-      - LISTMONK_db__database=${LISTMONK_db__database}
-      - LISTMONK_db__user=${LISTMONK_db__user}
-      - LISTMONK_db__password=${LISTMONK_db__password}
-      - LISTMONK_db__ssl_mode=${LISTMONK_db__ssl_mode}
-      - LISTMONK_db__max_open=${LISTMONK_db__max_open}
-      - LISTMONK_db__max_idle=${LISTMONK_db__max_idle}
-      - LISTMONK_db__max_timespan="${LISTMONK_db__max_timespan}
+    env_file: "dev.env"
     depends_on:
       - db
     volumes:
       - ../:/app
-      - $GOPATH/pkg/mod/cache:/go/pkg/mod/cache
     networks:
       - listmonk
 

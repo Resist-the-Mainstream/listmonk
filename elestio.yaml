@@ -8,12 +8,36 @@ config:
   runCommand: "docker-compose up -d"
   isMonoRepoPackageInRoot: false
 environments:
-  - key: "SOFTWARE_VERSION_TAG"
-    value: "latest"
+  - key: "NETWORK"
+    value: "172.17.0.1"
   - key: "LISTMONK_ADMIN_USER"
     value: "[EMAIL]"
   - key: "LISTMONK_ADMIN_PASSWORD"
     value: "random_password"
+  - key: "LISTMONK_app__address"
+    value: "app:9000"
+  - key: "LISTMONK_db__host"
+    value: "db"
+  - key: "LISTMONK_db__port"
+    value: 5432
+  - key: "LISTMONK_db__database"
+    value: "listmonk"
+  - key: "LISTMONK_db__user"
+    value: "listmonk"
+  - key: "LISTMONK_db__password"
+    value: "random_password"
+  - key: "LISTMONK_db__ssl_mode"
+    value: "disable"
+  - key: "LISTMONK_db__max_open"
+    value: 25
+  - key: "LISTMONK_db__max_idle"
+    value: 25
+  - key: "LISTMONK_db__max_timespan"
+    value: "300s"
+  - key: "LISTMONK_upload__filesystem__upload_path"
+    value: "./uploads"
+  - key: "LISTMONK_upload__filesystem__upload_uri"
+    value: "/media/uploads"
 ports:
   - protocol: "HTTPS"
     targetProtocol: "HTTP"
