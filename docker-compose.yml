@@ -21,7 +21,7 @@ services:
 
   app:
     restart: unless-stopped
-    image: listmonk--rtm_elestio:latest
+    image: listmonk:latest
     env_file: ".env"
     ports:
       - "${NETWORK}:9000:9000" # hardcoded for now
