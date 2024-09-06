@@ -73,9 +73,14 @@ mtime=$(stat -c %Y "$file")
 
 args=$(printf "%s\n" "${args[@]}" | sort)
 
-name="listmonk--$(echo "$file" | \
-    sed -E 's/\.?Dockerfile$//' | \
-    sed -E 's,[/.],_,g')"
+name=$(
+    echo -n "listmonk--$(
+        echo "$file" | \
+            sed -E 's/\.?Dockerfile$//' | \
+            sed -E 's,[/.],_,g'
+    )" | \
+    sed -E 's/--$//'
+)
 
 version="$mtime$(
     for arg in $args; do
