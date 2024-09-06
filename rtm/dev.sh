@@ -6,7 +6,7 @@ docker_compose="docker compose \
 	--project-name rtm-dev-listmonk \
 	--file rtm/dev.docker-compose.yml \
 	--env-file rtm/dev.env \
-	--project-directory rtm"
+	--project-directory ."
 
 if [ "$1" = "--clean" ]; then
     rtm/run-dev.sh

@@ -17,12 +17,12 @@ services:
       retries: 6
     container_name: listmonk_db
     volumes:
-      - ../DB:/var/lib/postgresql/data
+      - ./DB:/var/lib/postgresql/data
 
   app:
     restart: unless-stopped
     image: listmonk--rtm_elestio:latest
-    env_file: "../.env"
+    env_file: ".env"
     ports:
       - "${NETWORK}:9000:9000" # hardcoded for now
     networks:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ../uploads:/listmonk/uploads
+      - ./uploads:/listmonk/uploads
 
 networks:
   listmonk:

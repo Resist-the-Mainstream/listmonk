@@ -6,7 +6,7 @@ docker_compose="docker compose \
 	--project-name rtm-elestio-listmonk \
 	--file rtm/elestio.docker-compose.yml \
 	--env-file .env \
-	--project-directory rtm"
+	--project-directory ."
 
 case "$1" in
 	"--build")

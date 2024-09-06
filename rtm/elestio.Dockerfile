@@ -7,7 +7,7 @@ RUN apk --no-cache add ca-certificates tzdata shadow su-exec
 WORKDIR /listmonk
 
 # Copy only the necessary files
-COPY ../listmonk .
+COPY listmonk .
 
 # Expose the application port
 EXPOSE 9000

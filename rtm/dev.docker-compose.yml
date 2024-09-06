@@ -28,7 +28,7 @@ services:
     depends_on:
       - backend
     volumes:
-      - ../:/app
+      - .:/app
     networks:
       - listmonk
 
@@ -41,7 +41,7 @@ services:
     depends_on:
       - db
     volumes:
-      - ../:/app
+      - .:/app
     networks:
       - listmonk
 
