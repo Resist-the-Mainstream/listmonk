@@ -37,7 +37,7 @@ services:
     command: ["make", ".rtm-dev-backend"]
     ports:
       - "9000"
-    env_file: "dev.env"
+    env_file: "rtm/dev.env"
     depends_on:
       - db
     volumes:
