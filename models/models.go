@@ -604,12 +604,25 @@ func (camps Campaigns) LoadStats(stmt *sqlx.Stmt) error {
 	return nil
 }
 
+// Regexp that matches all urls
+var urlReg = regexp.MustCompile(`https?:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])`)
+
+// Appends "@TrackLink" to all urls that don't already have one in a string
+func appendTrackLinkToAllUrls(str string) string {
+	return urlReg.ReplaceAllStringFunc(str, func(urlStr string) string {
+		if strings.HasSuffix(urlStr, "@TrackLink") {
+			return urlStr
+		}
+		return urlStr + "@TrackLink"
+	})
+}
+
 // CompileTemplate compiles a campaign body template into its base
 // template and sets the resultant template to Campaign.Tpl.
 func (c *Campaign) CompileTemplate(f template.FuncMap) error {
 	// If the subject line has a template string, compile it.
 	if strings.Contains(c.Subject, "{{") {
-		subj := c.Subject
+		subj := appendTrackLinkToAllUrls(c.Subject)
 		for _, r := range regTplFuncs {
 			subj = r.regExp.ReplaceAllString(subj, r.replace)
 		}
@@ -623,7 +636,7 @@ func (c *Campaign) CompileTemplate(f template.FuncMap) error {
 	}
 
 	// Compile the base template.
-	body := c.TemplateBody
+	body := appendTrackLinkToAllUrls(c.TemplateBody)
 	for _, r := range regTplFuncs {
 		body = r.regExp.ReplaceAllString(body, r.replace)
 	}
@@ -644,6 +657,7 @@ func (c *Campaign) CompileTemplate(f template.FuncMap) error {
 	}
 
 	// Compile the campaign message.
+	body = appendTrackLinkToAllUrls(body)
 	for _, r := range regTplFuncs {
 		body = r.regExp.ReplaceAllString(body, r.replace)
 	}
@@ -660,7 +674,7 @@ func (c *Campaign) CompileTemplate(f template.FuncMap) error {
 	c.Tpl = out
 
 	if strings.Contains(c.AltBody.String, "{{") {
-		b := c.AltBody.String
+		b := appendTrackLinkToAllUrls(c.AltBody.String)
 		for _, r := range regTplFuncs {
 			b = r.regExp.ReplaceAllString(b, r.replace)
 		}
@@ -677,7 +691,7 @@ func (c *Campaign) CompileTemplate(f template.FuncMap) error {
 // ConvertContent converts a campaign's body from one format to another,
 // for example, Markdown to HTML.
 func (c *Campaign) ConvertContent(from, to string) (string, error) {
-	body := c.Body
+	body := appendTrackLinkToAllUrls(c.Body)
 	for _, r := range regTplFuncs {
 		body = r.regExp.ReplaceAllString(body, r.replace)
 	}
