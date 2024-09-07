@@ -121,12 +121,10 @@ fi
 # Run the command if present
 if [ $# -gt 0 ]; then
     if [ -t 1 ]; then
-        tty="-it --rm"
-    else
-        tty="--rm"
+        tty="-it --rm " # dev
     fi
 
-    eval "docker run $tty $(
+    eval "docker run ${tty}$(
         for volume in "${volumes[@]}"; do
             echo -n " -v $volume"
         done
