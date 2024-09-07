@@ -73,9 +73,9 @@
     <b-table :data="subscribers.results ?? []" :loading="loading.subscribers" @check-all="onTableCheck"
       @check="onTableCheck" :checked-rows.sync="bulk.checked" paginated backend-pagination pagination-position="both"
       @page-change="onPageChange" :current-page="queryParams.page" :per-page="subscribers.perPage"
-      :total="subscribers.total" hoverable checkable backend-sorting @sort="onSort">
+      :total="subscribers.total" hoverable :checkable="$can('subscribers:get_all')" backend-sorting @sort="onSort">
       <template #top-left>
-        <div class="actions">
+        <div v-if="$can('subscribers:get_all')" class="actions">
           <a class="a" href="#" @click.prevent="exportSubscribers" data-cy="btn-export-subscribers">
             <b-icon icon="cloud-download-outline" size="is-small" />
             {{ $t('subscribers.export') }}
@@ -148,7 +148,7 @@
 
       <b-table-column v-slot="props" cell-class="actions" align="right">
         <div>
-          <a :href="`/api/subscribers/${props.row.id}/export`" data-cy="btn-download"
+          <a v-if="$can('subscribers:get_all')" :href="`/api/subscribers/${props.row.id}/export`" data-cy="btn-download"
             :aria-label="$t('subscribers.downloadData')">
             <b-tooltip :label="$t('subscribers.downloadData')" type="is-dark">
               <b-icon icon="cloud-download-outline" size="is-small" />
