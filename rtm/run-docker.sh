@@ -95,7 +95,7 @@ clean() {
     images=$(docker images -q "$name" | uniq)
 
     if [ ! -z "$images" ]; then
-        docker rmi -f "$images"
+        docker rmi -f "$images" || echo "Images not cleaned do to error"
     fi;
 }
 
@@ -121,10 +121,12 @@ fi
 # Run the command if present
 if [ $# -gt 0 ]; then
     if [ -t 1 ]; then
-        tty="-it --rm " # dev
+        tty="-it --rm" # dev
+    else
+        tty="--rm"
     fi
 
-    eval "docker run ${tty}$(
+    eval "docker run $tty $(
         for volume in "${volumes[@]}"; do
             echo -n " -v $volume"
         done
