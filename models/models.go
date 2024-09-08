@@ -604,17 +604,15 @@ func (camps Campaigns) LoadStats(stmt *sqlx.Stmt) error {
 	return nil
 }
 
-// Regexp that matches all urls
-var urlReg = regexp.MustCompile(`https?:\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:\/~+#-]*[\w@?^=%&\/~+#-])`)
+// Regexps that match "href" links
+var hrefSingleReg = regexp.MustCompile(`\s*href\s*=\s*'\s*([^\s'{]*)\s*'`)
+var hrefDoubleReg = regexp.MustCompile(`\s*href\s*=\s*"\s*([^\s"{]*)\s*"`)
 
-// Appends "@TrackLink" to all urls that don't already have one in a string
+// Appends @TrackLink to all "href" links that don't include templates
 func appendTrackLinkToAllUrls(str string) string {
-	return urlReg.ReplaceAllStringFunc(str, func(urlStr string) string {
-		if strings.HasSuffix(urlStr, "@TrackLink") {
-			return urlStr
-		}
-		return urlStr + "@TrackLink"
-	})
+	str = hrefSingleReg.ReplaceAllString(str, ` href='$1@TrackLink'`)
+	str = hrefDoubleReg.ReplaceAllString(str, ` href="$1@TrackLink"`)
+	return strings.ReplaceAll(str, "@TrackLink@TrackLink", "@TrackLink")
 }
 
 // CompileTemplate compiles a campaign body template into its base
