@@ -1,4 +1,20 @@
 services:
+  mailpit:
+    image: axllent/mailpit:v1.20
+    volumes:
+      - listmonk-mailpit:/data
+    networks:
+      - listmonk
+    restart: unless-stopped
+    ports:
+      - "1025"
+      - "8025:8025"
+    environment:
+      - MP_MAX_MESSAGES=5000
+      - MP_DATABASE=/data/mailpit.db
+      - MP_SMTP_AUTH_ACCEPT_ANY=1
+      - MP_SMTP_AUTH_ALLOW_INSECURE=1
+
   db:
     image: postgres:14
     ports:
@@ -11,9 +27,7 @@ services:
       - POSTGRES_PASSWORD=${LISTMONK_db__password}
     restart: unless-stopped
     volumes:
-      - type: volume
-        source: listmonk-db
-        target: /var/lib/postgresql/data
+      - listmonk-db:/var/lib/postgresql/data
 
   frontend:
     image: listmonk--rtm_dev:latest
@@ -40,13 +54,17 @@ services:
     env_file: "rtm/dev.env"
     depends_on:
       - db
+      - mailpit
     volumes:
       - .:/app
+      - listmonk-go-pkgs:/go/pkg/mod/cache
     networks:
       - listmonk
 
 volumes:
   listmonk-db:
+  listmonk-mailpit:
+  listmonk-go-pkgs:
 
 networks:
   listmonk:
