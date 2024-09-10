@@ -194,10 +194,10 @@ func handleViewCampaignMessage(c echo.Context) error {
 // campaigns link to.
 func handleSubscriptionPage(c echo.Context) error {
 	var (
-		app           = c.Get("app").(*App)
-		subUUID       = c.Param("subUUID")
-		showManage, _ = strconv.ParseBool(c.FormValue("manage"))
-		out           = unsubTpl{}
+		app     = c.Get("app").(*App)
+		subUUID = c.Param("subUUID")
+		// showManage, _ = strconv.ParseBool(c.FormValue("manage"))
+		out = unsubTpl{}
 	)
 	out.SubUUID = subUUID
 	out.Title = app.i18n.T("public.unsubscribeTitle")
@@ -220,11 +220,12 @@ func handleSubscriptionPage(c echo.Context) error {
 
 	// Only show preference management if it's enabled in settings.
 	if app.constants.Privacy.AllowPreferences {
-		out.ShowManage = showManage
+		// out.ShowManage = showManage
+		out.ShowManage = true // always use management page
 	}
 	if out.ShowManage {
 		// Get the subscriber's lists.
-		subs, err := app.core.GetSubscriptions(0, subUUID, false)
+		subs, err := app.core.GetSubscriptions(0, subUUID, true) // update to get all lists
 		if err != nil {
 			return echo.NewHTTPError(http.StatusBadRequest, app.i18n.T("public.errorFetchingLists"))
 		}
