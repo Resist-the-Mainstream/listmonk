@@ -130,16 +130,17 @@ go_run := CGO_ENABLED=0 go run -ldflags="$(go_ldflags)" cmd/*.go --config=""
 rtm-dev: rtm/dev.sh
 
 .PHONY: .rtm-dev
-.rtm-dev: $(FRONTEND_YARN_MODULES)
+.rtm-dev: $(FRONTEND_YARN_MODULES) $(FRONTEND_DIST)
 
 .PHONY: .rtm-dev-frontend
 .rtm-dev-frontend: export VUE_APP_VERSION = "${VERSION}"
-.rtm-dev-frontend: $(FRONTEND_YARN_MODULES)
+.rtm-dev-frontend:
 	cd frontend && $(YARN) dev
 
 .PHONY: .rtm-dev-backend
-.rtm-dev-backend: $(FRONTEND_YARN_MODULES)
-	$(go_run) --yes --idempotent --install --upgrade --config=""
+.rtm-dev-backend:
+	$(go_run) --config="" --install --yes --idempotent
+	$(go_run) --config="" --upgrade --yes
 	$(go_run) --config=""
 
 .PHONY: rtm-dev-clean
