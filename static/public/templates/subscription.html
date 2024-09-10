@@ -36,12 +36,11 @@
                     <h3>{{ L.T "public.managePrefsUnsub" }}</h3>
                     <ul class="lists">
                         {{ range $i, $l := .Data.Subscriptions }}
-                            {{ if or (ne $l.SubscriptionStatus.Value "unsubscribed") (ne $l.SubscriptionStatus.Value nil) }}
-                                <li>
-                                    <input id="l-{{ $l.UUID}}" type="checkbox" name="l" value="{{ $l.UUID }}" checked />
-                                    <label for="l-{{ $l.UUID}}">{{ $l.Name }}</label>
-                                </li>
-                            {{ end }}
+                            {{ $subscribed := or (eq $l.SubscriptionStatus.Value "unconfirmed") (eq $l.SubscriptionStatus.Value "confirmed") }}
+                            <li>
+                                <input id="l-{{ $l.UUID}}" type="checkbox" name="l" value="{{ $l.UUID }}" {{ if $subscribed }}checked{{ end }} />
+                                <label for="l-{{ $l.UUID}}">{{ $l.Name }}</label>
+                            </li>
                         {{ end }}
                     </ul>
                 {{ end }}
