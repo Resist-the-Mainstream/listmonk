@@ -599,28 +599,56 @@ views AS (
     WHERE campaign_id = ANY($1)
     GROUP BY campaign_id
 ),
+views_unique AS (
+    SELECT campaign_id, COUNT(campaign_id) as num FROM (
+        SELECT DISTINCT campaign_id, subscriber_id FROM campaign_views
+        WHERE campaign_id = ANY($1)
+    ) AS tmp
+    GROUP BY campaign_id
+),
 clicks AS (
     SELECT campaign_id, COUNT(campaign_id) as num FROM link_clicks
     WHERE campaign_id = ANY($1)
+    GROUP BY campaign_id
+),
+clicks_unique AS (
+    SELECT campaign_id, COUNT(campaign_id) as num FROM (
+        SELECT DISTINCT campaign_id, link_id, subscriber_id FROM link_clicks
+        WHERE campaign_id = ANY($1)
+    ) AS tmp
     GROUP BY campaign_id
 ),
 bounces AS (
     SELECT campaign_id, COUNT(campaign_id) as num FROM bounces
     WHERE campaign_id = ANY($1)
     GROUP BY campaign_id
+),
+bounces_unique AS (
+    SELECT campaign_id, COUNT(campaign_id) as num FROM (
+        SELECT DISTINCT campaign_id, subscriber_id FROM public.bounces
+        WHERE campaign_id = ANY($1)
+    ) as tmp
+    WHERE campaign_id = ANY($1)
+    GROUP BY campaign_id
 )
 SELECT id as campaign_id,
     COALESCE(v.num, 0) AS views,
+    COALESCE(vu.num, 0) AS views_unique,
     COALESCE(c.num, 0) AS clicks,
+    COALESCE(cu.num, 0) AS clicks_unique,
     COALESCE(b.num, 0) AS bounces,
+    COALESCE(bu.num, 0) AS bounces_unique,
     COALESCE(l.lists, '[]') AS lists,
     COALESCE(m.media, '[]') AS media
 FROM (SELECT id FROM UNNEST($1) AS id) x
 LEFT JOIN lists AS l ON (l.campaign_id = id)
 LEFT JOIN media AS m ON (m.campaign_id = id)
 LEFT JOIN views AS v ON (v.campaign_id = id)
+LEFT JOIN views_unique AS vu ON (vu.campaign_id = id)
 LEFT JOIN clicks AS c ON (c.campaign_id = id)
+LEFT JOIN clicks_unique AS cu ON (cu.campaign_id = id)
 LEFT JOIN bounces AS b ON (b.campaign_id = id)
+LEFT JOIN bounces_unique AS bu ON (bu.campaign_id = id)
 ORDER BY ARRAY_POSITION($1, id);
 
 -- name: get-campaign-for-preview

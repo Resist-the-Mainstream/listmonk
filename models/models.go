@@ -352,10 +352,13 @@ type Campaign struct {
 
 // CampaignMeta contains fields tracking a campaign's progress.
 type CampaignMeta struct {
-	CampaignID int `db:"campaign_id" json:"-"`
-	Views      int `db:"views" json:"views"`
-	Clicks     int `db:"clicks" json:"clicks"`
-	Bounces    int `db:"bounces" json:"bounces"`
+	CampaignID    int `db:"campaign_id" json:"-"`
+	Views         int `db:"views" json:"views"`
+	ViewsUnique   int `db:"views_unique" json:"views_unique"`
+	Clicks        int `db:"clicks" json:"clicks"`
+	ClicksUnique  int `db:"clicks_unique" json:"clicks_unique"`
+	Bounces       int `db:"bounces" json:"bounces"`
+	BouncesUnique int `db:"bounces_unique" json:"bounces_unique"`
 
 	// This is a list of {list_id, name} pairs unlike Subscriber.Lists[]
 	// because lists can be deleted after a campaign is finished, resulting
@@ -595,8 +598,11 @@ func (camps Campaigns) LoadStats(stmt *sqlx.Stmt) error {
 		if c.CampaignID == camps[i].ID {
 			camps[i].Lists = c.Lists
 			camps[i].Views = c.Views
+			camps[i].ViewsUnique = c.ViewsUnique
 			camps[i].Clicks = c.Clicks
+			camps[i].ClicksUnique = c.ClicksUnique
 			camps[i].Bounces = c.Bounces
+			camps[i].BouncesUnique = c.BouncesUnique
 			camps[i].Media = c.Media
 		}
 	}

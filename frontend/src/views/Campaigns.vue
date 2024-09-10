@@ -121,11 +121,23 @@
         <div class="fields stats" :set="stats = getCampaignStats(props.row)">
           <p>
             <label for="#">{{ $t('campaigns.views') }}</label>
-            <span>{{ $utils.formatNumber(props.row.views) }}</span>
+            <span>{{ $utils.formatNumber(props.row.viewsUnique) }} ({{
+              Number(props.row.viewsUnique / stats.sent || 0)
+                .toLocaleString(undefined, {
+                  style: "percent",
+                  maximumFractionDigits: 2,
+                })
+            }})</span>
           </p>
           <p>
             <label for="#">{{ $t('campaigns.clicks') }}</label>
-            <span>{{ $utils.formatNumber(props.row.clicks) }}</span>
+            <span>{{ $utils.formatNumber(props.row.clicksUnique) }} ({{
+              Number(props.row.clicksUnique / stats.sent || 0)
+                .toLocaleString(undefined, {
+                  style: "percent",
+                  maximumFractionDigits: 2,
+                })
+            }})</span>
           </p>
           <p>
             <label for="#">{{ $t('campaigns.sent') }}</label>
@@ -138,7 +150,7 @@
             <label for="#">{{ $t('globals.terms.bounces') }}</label>
             <span>
               <router-link :to="{ name: 'bounces', query: { campaign_id: props.row.id } }">
-                {{ $utils.formatNumber(props.row.bounces) }}
+                {{ $utils.formatNumber(props.row.bouncesUnique) }}
               </router-link>
             </span>
           </p>
@@ -147,7 +159,7 @@
             <span class="send-rate">
               <b-tooltip
                 :label="`${stats.netRate} / ${$t('campaigns.rateMinuteShort')} @
-                                                                                          ${$utils.duration(stats.startedAt, stats.updatedAt)}`"
+                ${$utils.duration(stats.startedAt, stats.updatedAt)}`"
                 type="is-dark">
                 {{ stats.rate.toFixed(0) }} / {{ $t('campaigns.rateMinuteShort') }}
               </b-tooltip>
