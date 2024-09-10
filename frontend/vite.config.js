@@ -26,7 +26,7 @@ export default defineConfig(({ _, mode }) => {
         '^/$': {
           target: env.LISTMONK_API_URL || 'http://127.0.0.1:9000',
         },
-        '^/(api|webhooks|subscription|public|health)': {
+        '^/(api|webhooks|subscription|public|health|link|campaign|auth)': {
           target: env.LISTMONK_API_URL || 'http://127.0.0.1:9000',
         },
         '^/admin/login': {
