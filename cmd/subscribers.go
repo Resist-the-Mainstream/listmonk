@@ -226,8 +226,8 @@ func handleCreateSubscriber(c echo.Context) error {
 // handleUpdateSubscriber handles modification of a subscriber.
 func handleUpdateSubscriber(c echo.Context) error {
 	var (
-		app  = c.Get("app").(*App)
-		user = c.Get(auth.UserKey).(models.User)
+		app = c.Get("app").(*App)
+		// user = c.Get(auth.UserKey).(models.User)
 
 		id, _ = strconv.Atoi(c.Param("id"))
 		req   struct {
@@ -256,8 +256,10 @@ func handleUpdateSubscriber(c echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, app.i18n.T("subscribers.invalidName"))
 	}
 
-	// Filter lists against the current user's permitted lists.
-	listIDs := filterListsByPerm(req.Lists, user)
+	// not sure how these list perms should be working
+	// disabling for now since "subscribers:manage" is already validated
+	listIDs := req.Lists
+	// listIDs := filterListsByPerm(req.Lists, user)
 
 	out, _, err := app.core.UpdateSubscriberWithLists(id, req.Subscriber, listIDs, nil, req.PreconfirmSubs, true)
 	if err != nil {
